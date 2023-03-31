@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session, sessionmaker
 from models.base import Base
 from models.jogos import Jogo
 
-engine = create_engine('sqlite+pysqlite:///dadosJogos.db', echo=True)
+engine = create_engine('sqlite+pysqlite:///dadosJogos.db', echo=False)
 
 Session = sessionmaker(bind=engine)
 session = Session()
@@ -28,22 +28,35 @@ def inputJogos():
     session.add(jogo7)
 
     session.commit()
+    print('Jogos cadastrados com sucesso!')
 
 def visualizarJogos():
     jogos = session.query(Jogo).all()
+    if len(jogos) == 0:
+        print('Não há jogos cadastrados!')
+    else:
+        for jogo in jogos:
+            print(jogo)
+
+def deletarJogos():
+    jogos = session.query(Jogo).all()
     for jogo in jogos:
-        print(jogo)
+        session.delete(jogo)
+    session.commit()
 
 def userInput():
     while True:
         print('Cadastro e visualização de jogos:')
         print('- Envie 1 para cadastrar os jogos.')
         print('- Envie 2 para visualizar os jogos cadastrados.')
+        print('- Envie 3 para deletar os jogos cadastrados.')
         opcao = int(input('Envie sua opção: '))
         if opcao == 1:
             inputJogos()
         elif opcao == 2:
             visualizarJogos()
+        elif opcao == 3:
+            deletarJogos()
         else:
             print('Opção inválida')
 
